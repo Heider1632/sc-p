@@ -3,15 +3,19 @@ from recommender import top_user, top_resources
 
 api = Flask(__name__)
 
-@api.route('/api/recommender/user', methods=['POST'])
+@api.route('/api/recommender/user', methods=['GET'])
 def recommender_user():
-    data = json.loads(request.data)
-    return top_user(data)
+    id = int(request.args['id'])
+    name = request.args['name']
+    return top_user(id, name)
 
-@api.route('/api/recommender/resources', methods=['POST'])
+@api.route('/api/recommender/resources', methods=['GET'])
 def recommender_resources():
-    data = json.loads(request.data)
-    return top_resources(data)
+    id = int(request.args['id'])
+    name = request.args['name']
+    learningStyle = int(request.args['learningStyle'])
+    lesson = request.args['lesson']
+    return top_resources(id, name, learningStyle, lesson)
 
 @api.route('/api/recommender/dataset/update', methods=['POST'])
 def write_dataset():
