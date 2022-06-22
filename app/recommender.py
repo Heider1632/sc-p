@@ -19,34 +19,18 @@ resources_ = pd.read_csv(file_dir_datasets_base + 'resources.csv')
 
 def top_resources(user, name, learningStyle, lesson):
 
-    title = 'R1_E1_L1_Act'
-
     ratings_ = pd.read_csv(file_dir_dynamics_datasets + name + '.csv')
 
-    rated_resources = ratings_.merge(resources_, left_on='resourceId', right_on='resourceId')[['userId', 'resourceId', 'title', 'rating', 'learningStyle']]
+    rated_resources = ratings_.merge(resources_, left_on='resourceId', right_on='resourceId')[['userId', 'resourceId', 'title', 'rating', 'learningStyle', 'structure']]
 
-    rr = rated_resources[rated_resources['learningStyle'] == learningStyle & rated_resources['title'].str.contains(lesson)]
+    results = rated_resources[(rated_resources['userId'] == user) & (rated_resources['learningStyle'] == learningStyle) & (rated_resources['title'].str.contains(lesson))]
     
-    ratings_pivot = rr.pivot_table(index='userId', columns='title', values='rating', aggfunc=np.mean)
-    ratings_pivot.fillna(0, inplace=True)
-
-    sparse_ratings = sp.sparse.csr_matrix(ratings_pivot.values)
-    item_similarity = cosine_similarity(sparse_ratings.T)
-
-    item_similarity_df = pd.DataFrame(item_similarity, index=ratings_pivot.columns, columns=ratings_pivot.columns)
-
-    count = 0
-    results = []
-    print('Similar shows to {} include'.format(title))
-    similar_indexes = item_similarity_df.sort_values(by=title, ascending=False).index[1:11]
-    similar_values =  item_similarity_df.sort_values(by=title, ascending=False).loc[:, title].tolist()[1:11]
-    for resource, sim in zip(similar_indexes, similar_values):
-        print('No: {}: {} Similarity {}'.format(count, resource, sim))
-        count += 1
-        results.append(resource)
-    return json.dumps(results)
+    return results.to_json(orient='records')
 
 def top_user(user, name):
+    if(os.path.exists(file_dir_dynamics_datasets + name +  '.csv') == False):
+        create_dataset(name)
+
     ratings_ = pd.read_csv(file_dir_dynamics_datasets + name + '.csv')
 
     rated_resources = ratings_.merge(resources_, left_on='resourceId', right_on='resourceId')[['userId', 'resourceId', 'title', 'rating']]
@@ -74,16 +58,17 @@ def write_dataset(data):
     body = data['body']
 
     if(os.path.exists(file_dir_dynamics_datasets + data['name'] +  '.csv')):
-        with open(file_dir_dynamics_datasets + data['name'] +  '.csv', 'w', newline='') as file:
+        with open(file_dir_dynamics_datasets + data['name'] +  '.csv', 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(body)
+            file.close()
     else:
-        create_dataset(data)
+        create_dataset(data['name'])
 
     return json.dumps("done")
 
-def create_dataset(data):
-    df = pd.read_csv(ROOT_DIR + 'ratings.csv')
-    df.to_csv(file_dir_dynamics_datasets + data['name'] + '.csv')
+def create_dataset(name):
+    df = pd.read_csv(file_dir_datasets_base + '/ratings.csv')
+    df.to_csv(file_dir_dynamics_datasets + name + '.csv', index=False)
 
     return json.dumps("done")

@@ -1,5 +1,5 @@
 from flask import Flask, json, request
-from recommender import top_user, top_resources
+from recommender import top_user, top_resources, write_dataset
 
 api = Flask(__name__)
 
@@ -18,7 +18,7 @@ def recommender_resources():
     return top_resources(id, name, learningStyle, lesson)
 
 @api.route('/api/recommender/dataset/update', methods=['POST'])
-def write_dataset():
+def override_dataset():
     data = json.loads(request.data)
     return write_dataset(data)
 
