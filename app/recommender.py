@@ -10,7 +10,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 import os
 
 plt.style.use('ggplot')
-pd.set_option('display.max_columns', 5)
+pd.set_option('display.max_columns', 6)
 
 file_dir_datasets_base = ROOT_DIR + '/data/datasets/'
 file_dir_dynamics_datasets = ROOT_DIR + '/datasets/'
@@ -24,6 +24,8 @@ def top_resources(user, name, learningStyle, lesson):
     rated_resources = ratings_.merge(resources_, left_on='resourceId', right_on='resourceId')[['userId', 'resourceId', 'title', 'rating', 'learningStyle', 'structure']]
 
     results = rated_resources[(rated_resources['userId'] == user) & (rated_resources['learningStyle'] == learningStyle) & (rated_resources['title'].str.contains(lesson))]
+
+    print(results)
     
     return results.to_json(orient='records')
 
@@ -45,8 +47,8 @@ def top_user(user, name):
 
     count = 0
     print('Similar show to {} include'.format(user))
-    similar_indexes = user_similarity_df.sort_values(by=user, ascending=False).index[1:11]
-    similar_values =  user_similarity_df.sort_values(by=user, ascending=False).loc[:, user].tolist()[1:11]
+    similar_indexes = user_similarity_df.sort_values(by=user, ascending=False).index[1:10]
+    similar_values =  user_similarity_df.sort_values(by=user, ascending=False).loc[:, user].tolist()[1:10]
     results = []
     for user, sim in zip(similar_indexes, similar_values):
         print('No: {}: {} Similarity {}'.format(count, user, sim))
