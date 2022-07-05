@@ -3,6 +3,10 @@ from recommender import top_user, top_resources, write_dataset
 
 api = Flask(__name__)
 
+@api.route("/") 
+def hello(): 
+    return "Hello, I love Digital Ocean!"
+
 @api.route('/api/recommender/user', methods=['GET'])
 def recommender_user():
     id = int(request.args['id'])
