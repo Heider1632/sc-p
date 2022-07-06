@@ -9,5 +9,5 @@ import logging
 logging.basicConfig(stream=sys.stderr)
 sys.path.insert(0, '/var/www/html/sc-p/')
 
-from app import app as application
+from app import api as application
 application.secret_key='sc-p'
