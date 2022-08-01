@@ -49,8 +49,8 @@ def top_user(user, name):
 
     count = 0
     print('Similar show to {} include'.format(user))
-    similar_indexes = user_similarity_df.sort_values(by=user, ascending=False).index[1:10]
-    similar_values =  user_similarity_df.sort_values(by=user, ascending=False).loc[:, user].tolist()[1:10]
+    similar_indexes = user_similarity_df.sort_values(by=user, ascending=False).index[1:20]
+    similar_values =  user_similarity_df.sort_values(by=user, ascending=False).loc[:, user].tolist()[1:20]
     results = []
     for user, sim in zip(similar_indexes, similar_values):
         print('No: {}: {} Similarity {}'.format(count, user, sim))
