@@ -84,6 +84,8 @@ def hello():
 @api.route('/api/recommender/user', methods=['GET'])
 def recommender_user():
     id = int(request.args['id'])
+    if id > 20: 
+        id = 20
     name = request.args['name']
     return top_user(id, name)
 
