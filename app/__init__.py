@@ -26,7 +26,7 @@ def top_resources(user, name, learningStyle, lesson):
     ratings_ = pd.read_csv(file_dir_dynamics_datasets + name + '.csv')
 
     rated_resources = ratings_.merge(resources_, left_on='resourceId', right_on='resourceId')[['userId', 'resourceId', 'title', 'rating', 'learningStyle', 'structure']]
-
+    
     results = rated_resources[(rated_resources['userId'] == user) & (rated_resources['learningStyle'] == learningStyle) & (rated_resources['title'].str.contains(lesson))]
     
     return results.to_json(orient='records')
